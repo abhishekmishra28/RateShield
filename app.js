@@ -1,5 +1,6 @@
 const express = require("express");
 const limiterRoutes = require("./src/routes/limiter.routes");
+const adminRoutes = require("./src/routes/admin.routes");
 const app = express();
 app.use(express.json());
 
@@ -16,9 +17,6 @@ app.get('/health',(req,res)=> {
         service:"RateShield"
     });
 });
-app.use(
-    '/api/v1',
-    limiterRoutes
-);
-
+app.use("/api/v1", limiterRoutes);
+app.use("/api/v1/admin", adminRoutes);
 module.exports = app;
