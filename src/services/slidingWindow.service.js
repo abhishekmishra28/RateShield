@@ -1,54 +1,57 @@
 const fs = require('fs');
 const path = require('path');
+const { randomUUID } = require('crypto');
 const { getRedisClient } = require('../config/redis.config');
 const { logger } = require('../config/logger.config');
 
 // Load Lua script at module initialization
 const LUA_SCRIPT = fs.readFileSync(
-  path.join(__dirname, 'lua', 'tokenBucket.lua'),
+  path.join(__dirname, 'lua', 'slidingWindow.lua'),
   'utf8'
 );
 
 let scriptSha = null;
 
 /**
- * Redis-backed Token Bucket Rate Limiter.
+ * Redis-backed Sliding Window Log Rate Limiter.
  *
- * Uses a Lua script for atomic token consumption:
- * - Lazy refill: calculates tokens to add based on elapsed time
- * - Atomic: entire refill-check-consume runs as one Redis operation
- * - Persistent: bucket state survives app restarts via Redis
+ * Uses a sorted set where each entry's score is the request timestamp.
+ * On each request:
+ *   1. Remove entries outside the current window (ZREMRANGEBYSCORE)
+ *   2. Count remaining entries (ZCARD)
+ *   3. If under limit, add new entry (ZADD)
+ *
+ * All done atomically via Lua script to prevent race conditions.
  *
  * @param {string} clientId - Unique client identifier
- * @param {number} capacity - Maximum tokens (burst size)
- * @param {number} refillRate - Tokens added per second
+ * @param {number} windowSize - Window duration in seconds
+ * @param {number} maxRequests - Max requests allowed per window
  * @returns {Promise<{allowed: boolean, remaining: number, retryAfter: number}>}
  */
-async function consume(clientId, capacity, refillRate) {
+async function consume(clientId, windowSize, maxRequests) {
   const redis = getRedisClient();
-  const key = `rateshield:bucket:${clientId}`;
-  const now = Date.now() / 1000; // seconds with decimals
+  const key = `rateshield:window:${clientId}`;
+  const now = Date.now() / 1000;
+  const requestId = `${now}:${randomUUID()}`;
 
   try {
-    // Load script SHA if not cached (EVALSHA is faster than EVAL)
     if (!scriptSha) {
       scriptSha = await redis.scriptLoad(LUA_SCRIPT);
-      logger.debug('Token bucket Lua script loaded');
+      logger.debug('Sliding window Lua script loaded');
     }
 
     let result;
     try {
       result = await redis.evalSha(scriptSha, {
         keys: [key],
-        arguments: [String(capacity), String(refillRate), String(now)],
+        arguments: [String(windowSize), String(maxRequests), String(now), requestId],
       });
     } catch (err) {
-      // Script may have been flushed — reload
       if (err.message.includes('NOSCRIPT')) {
         scriptSha = await redis.scriptLoad(LUA_SCRIPT);
         result = await redis.evalSha(scriptSha, {
           keys: [key],
-          arguments: [String(capacity), String(refillRate), String(now)],
+          arguments: [String(windowSize), String(maxRequests), String(now), requestId],
         });
       } else {
         throw err;
@@ -62,12 +65,12 @@ async function consume(clientId, capacity, refillRate) {
     return {
       allowed,
       remaining,
-      limit: capacity,
+      limit: maxRequests,
       retryAfter: allowed ? null : retryAfter,
-      algorithm: 'TOKEN_BUCKET',
+      algorithm: 'SLIDING_WINDOW',
     };
   } catch (error) {
-    logger.error({ err: error, clientId }, 'Token bucket consume failed');
+    logger.error({ err: error, clientId }, 'Sliding window consume failed');
     throw error;
   }
 }

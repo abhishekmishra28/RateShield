@@ -1,18 +1,8 @@
-const express =
-require('express');
+const router = require('express').Router();
+const { apiKeyAuth } = require('../middleware/apiKeyAuth.middleware');
+const { checkLimit } = require('../controllers/limiter.controller');
 
-const router =
-express.Router();
-
-const {
-    checkLimit
-} = require(
-'../controllers/limiter.controller'
-);
-
-router.post(
-    '/check',
-    checkLimit
-);
+// Rate limit check — requires valid client API key
+router.post('/check', apiKeyAuth, checkLimit);
 
 module.exports = router;
