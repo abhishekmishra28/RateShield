@@ -1,6 +1,19 @@
 node_modules/
 .env
+coverage/
+*.log
 
 # Prisma generated client
-
 src/generated/prisma/
+
+# Docker volumes
+postgres_data/
+redis_data/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
