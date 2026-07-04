@@ -35,11 +35,16 @@ async function findAll(filters = {}, page = 1, limit = 10) {
     where.algorithm = filters.algorithm;
   }
 
+  // Final safety net: ensure skip/take are always valid integers for Prisma.
+  // Prisma throws a runtime error if these are strings.
+  const safePage = Math.max(1, parseInt(page, 10) || 1);
+  const safeLimit = Math.max(1, parseInt(limit, 10) || 10);
+
   const [data, total] = await Promise.all([
     prisma.client.findMany({
       where,
-      skip: (page - 1) * limit,
-      take: limit,
+      skip: (safePage - 1) * safeLimit,
+      take: safeLimit,
       orderBy: { createdAt: 'desc' },
     }),
     prisma.client.count({ where }),

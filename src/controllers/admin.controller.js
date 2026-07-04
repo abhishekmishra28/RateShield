@@ -27,7 +27,16 @@ async function getClient(req, res, next) {
 
 async function listClients(req, res, next) {
   try {
-    const { page, limit, status, algorithm } = req.query;
+    const { status, algorithm } = req.query;
+
+    // Safely coerce page & limit to positive integers.
+    // The Zod validation middleware should already coerce these, but we
+    // apply defense-in-depth here to guard against middleware bypass or
+    // future refactors that could pass raw query-string values (strings)
+    // to Prisma, which requires integers for skip/take.
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 10));
+
     const filters = {};
     if (status) filters.status = status;
     if (algorithm) filters.algorithm = algorithm;

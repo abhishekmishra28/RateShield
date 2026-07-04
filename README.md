@@ -18,19 +18,19 @@ RateShield is a production-grade backend service that sits in front of APIs and 
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                    Express.js Server                        │
-│  ┌─────────────┐  ┌──────────────┐  ┌───────────────────┐  │
-│  │  Request     │  │  API Key     │  │  Admin Auth       │  │
-│  │  Logger      │→ │  Auth        │  │  Middleware       │  │
-│  │  (Pino)      │  │  Middleware  │  │  (x-admin-key)    │  │
-│  └─────────────┘  └──────┬───────┘  └───────────────────┘  │
+│  ┌─────────────┐  ┌──────────────┐  ┌───────────────────┐   │
+│  │  Request    │  │  API Key     │  │  Admin Auth       │   │
+│  │  Logger     │→ │  Auth        │  │  Middleware       │   │
+│  │  (Pino)     │  │  Middleware  │  │  (x-admin-key)    │   │
+│  └─────────────┘  └──────┬───────┘  └───────────────────┘   │
 │                          │                                  │
 │                          ▼                                  │
 │  ┌──────────────────────────────────────────────────────┐   │
 │  │                  Controller Layer                    │   │
-│  │  ┌────────────┐  ┌──────────┐  ┌─────────────────┐  │   │
-│  │  │  Limiter   │  │  Admin   │  │  Analytics      │  │   │
-│  │  │  Controller│  │  CRUD    │  │  Controller     │  │   │
-│  │  └─────┬──────┘  └──────────┘  └─────────────────┘  │   │
+│  │  ┌────────────┐  ┌──────────┐  ┌─────────────────┐   │   │
+│  │  │  Limiter   │  │  Admin   │  │  Analytics      │   │   │
+│  │  │  Controller│  │  CRUD    │  │  Controller     │   │   │
+│  │  └─────┬──────┘  └──────────┘  └─────────────────┘   │   │
 │  └────────┼─────────────────────────────────────────────┘   │
 │           │                                                 │
 │           ▼                                                 │
@@ -38,18 +38,18 @@ RateShield is a production-grade backend service that sits in front of APIs and 
 │  │                   Service Layer                      │   │
 │  │  ┌──────────────────────────────────────────────┐    │   │
 │  │  │        RateLimiter Factory (Strategy)        │    │   │
-│  │  │  ┌───────────────┐  ┌────────────────────┐  │    │   │
-│  │  │  │  Token Bucket  │  │  Sliding Window    │  │    │   │
-│  │  │  │  Strategy      │  │  Strategy          │  │    │   │
-│  │  │  └───────┬───────┘  └────────┬───────────┘  │    │   │
+│  │  │  ┌───────────────┐  ┌────────────────────┐   │    │   │
+│  │  │  │  Token Bucket │  │  Sliding Window    │   │    │   │
+│  │  │  │  Strategy     │  │  Strategy          │   │    │   │
+│  │  │  └───────┬───────┘  └────────┬───────────┘   │    │   │
 │  │  └──────────┼───────────────────┼───────────────┘    │   │
 │  └─────────────┼───────────────────┼────────────────────┘   │
-│                │                   │                         │
+│                │                   │                        │
 └────────────────┼───────────────────┼────────────────────────┘
                  │                   │
                  ▼                   ▼
 ┌────────────────────────┐  ┌─────────────────────────────────┐
-│      Redis             │  │      PostgreSQL (Neon)           │
+│      Redis             │  │      PostgreSQL (Neon)          │
 │  ┌──────────────────┐  │  │  ┌───────────────────────────┐  │
 │  │ Bucket State     │  │  │  │  Client Configuration     │  │
 │  │ Window State     │  │  │  │  (Prisma ORM)             │  │
@@ -76,20 +76,20 @@ RateShield is a production-grade backend service that sits in front of APIs and 
 
 ## 🚀 Tech Stack
 
-| Category | Technology |
-|----------|-----------|
-| **Runtime** | Node.js |
-| **Framework** | Express.js 5 |
-| **Database** | PostgreSQL (Neon) |
-| **ORM** | Prisma |
-| **Cache/State** | Redis 7 |
-| **Validation** | Zod |
-| **Logging** | Pino |
-| **API Docs** | Swagger/OpenAPI 3.0 |
-| **Testing** | Jest + Supertest |
-| **Load Testing** | k6 |
-| **Containerization** | Docker + Docker Compose |
-| **CI/CD** | GitHub Actions |
+| **Category**          | **Technology**             |
+|-----------------------|----------------------------|
+| **Runtime**           | Node.js                    |
+| **Framework**         | Express.js 5               |
+| **Database**          | PostgreSQL (Neon)          |
+| **ORM**               | Prisma                     |
+| **Cache / State**     | Redis 7                    |
+| **Validation**        | Zod                        |
+| **Logging**           | Pino                       |
+| **API Documentation** | Swagger / OpenAPI 3.0      |
+| **Testing**           | Jest + Supertest           |
+| **Load Testing**      | k6                         |
+| **Containerization**  | Docker + Docker Compose    |
+| **CI/CD**             | GitHub Actions             |
 
 ---
 
@@ -213,29 +213,30 @@ docker compose down -v
 
 ### Public Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/health` | Health check |
-| `GET` | `/api-docs` | Swagger UI documentation |
+| Method | Endpoint    | Description              |
+|--------|-------------|--------------------------|
+| `GET`  | `/health`   | Health check             |
+| `GET`  | `/api-docs` | Swagger UI documentation |
 
 ### Rate Limiter (requires `x-api-key` header)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/v1/check` | Check rate limit |
+| Method      | Endpoint        | Description      |
+|-------------|-----------------|------------------|
+| `POST`      | `/api/v1/check` | Check rate limit |
 
 ### Admin (requires `x-admin-key` header)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/v1/admin/clients` | Create client |
-| `GET` | `/api/v1/admin/clients` | List clients |
-| `GET` | `/api/v1/admin/clients/:id` | Get client |
-| `PUT` | `/api/v1/admin/clients/:id` | Update client |
-| `DELETE` | `/api/v1/admin/clients/:id` | Delete client |
-| `GET` | `/api/v1/admin/analytics` | Global analytics |
-| `GET` | `/api/v1/admin/analytics/:clientId` | Client analytics |
-| `DELETE` | `/api/v1/admin/analytics/:clientId` | Reset analytics |
+
+| **Method** | **Endpoint**                           | **Description**        |
+|------------|----------------------------------------|------------------------|
+| `POST`     | `/api/v1/admin/clients`                | Create a client        |
+| `GET`      | `/api/v1/admin/clients`                | List all clients       |
+| `GET`      | `/api/v1/admin/clients/:id`            | Retrieve a client      |
+| `PUT`      | `/api/v1/admin/clients/:id`            | Update a client        |
+| `DELETE`   | `/api/v1/admin/clients/:id`            | Delete a client        |
+| `GET`      | `/api/v1/admin/analytics`              | View global analytics  |
+| `GET`      | `/api/v1/admin/analytics/:clientId`    | View client analytics  |
+| `DELETE`   | `/api/v1/admin/analytics/:clientId`    | Reset client analytics |
 
 ### Example: Create a Client
 
@@ -287,12 +288,12 @@ Headers: `Retry-After: 2`, `X-RateLimit-Remaining: 0`
 
 ## 🔑 Redis Key Design
 
-| Purpose | Key Pattern | Data Type | TTL |
-|---------|------------|-----------|-----|
-| Token Bucket | `rateshield:bucket:{clientId}` | Hash | `2 × capacity/refillRate` |
-| Sliding Window | `rateshield:window:{clientId}` | Sorted Set | `windowSize + 60s` |
-| Analytics (client) | `rateshield:analytics:{clientId}:total` | Counter | None |
-| Analytics (global) | `rateshield:analytics:global:total` | Counter | None |
+| **Purpose**      | **Key Pattern**                         | **Data Type** | **TTL**                      |
+|------------------|-----------------------------------------|---------------|------------------------------|
+| Token Bucket     | `rateshield:bucket:{clientId}`          | Hash          | `2 × capacity / refillRate`  |
+| Sliding Window   | `rateshield:window:{clientId}`          | Sorted Set    | `windowSize + 60s`           |
+| Client Analytics | `rateshield:analytics:{clientId}:total` | Counter       | None                         |
+| Global Analytics | `rateshield:analytics:global:total`     | Counter       | None                         |
 
 ---
 
@@ -368,24 +369,23 @@ k6 run src/tests/load/rateLimitLoad.js --env API_KEY=your-key
 ```
 
 ### Expected Test Results
-
-| Suite | Tests | Coverage |
-|-------|-------|----------|
-| Unit: Token Bucket | 5 tests | Algorithm correctness |
-| Unit: Sliding Window | 4 tests | Window management |
-| Unit: Factory | 4 tests | Strategy selection |
-| Unit: Validators | 14 tests | Input validation |
-| Unit: Middleware | 9 tests | Auth & error handling |
-| Integration: Admin | 12 tests | Full CRUD lifecycle |
-| Integration: Limiter | 7 tests | Rate limit flow |
+| **Test Suite**         | **Tests** | **Coverage Area**               |
+|------------------------|-----------|---------------------------------|
+| Unit: Token Bucket     | 5         | Algorithm correctness           |
+| Unit: Sliding Window   | 4         | Window management               |
+| Unit: Factory          | 4         | Strategy selection              |
+| Unit: Validators       | 14        | Input validation                |
+| Unit: Middleware       | 9         | Authentication & error handling |
+| Integration: Admin     | 12        | Full CRUD lifecycle             |
+| Integration: Limiter   | 7         | End-to-end rate limit flow      |
 
 ### k6 Load Test Expected Results
 
-| Metric | Target |
-|--------|--------|
-| p95 Latency | < 100ms |
-| Error Rate | < 1% |
-| Throughput | 1000+ req/s |
+| **Performance Metric** | **Target**      |
+|------------------------|-----------------|
+| **p95 Latency**        | `< 100 ms`      |
+| **Error Rate**         | `< 1%`          |
+| **Throughput**         | `> 1,000 req/s` |
 
 ---
 
@@ -406,11 +406,12 @@ open http://localhost:5000/api-docs
 ```
 
 **Services:**
-| Service | Port | Image |
-|---------|------|-------|
-| RateShield App | 5000 | Node 20 Alpine |
-| PostgreSQL | 5432 | PostgreSQL 16 Alpine |
-| Redis | 6379 | Redis 7 Alpine |
+
+| **Service**        | **Port** | **Docker Image**        |
+|--------------------|----------|-------------------------|
+| **RateShield App** | `5000`   | Node.js 20 Alpine       |
+| **PostgreSQL**     | `5432`   | PostgreSQL 16 Alpine    |
+| **Redis**          | `6379`   | Redis 7 Alpine          |
 
 ---
 
@@ -447,14 +448,14 @@ open http://localhost:5000/api-docs
 
 ## 💥 Failure Scenarios
 
-| Scenario | Behavior |
-|----------|----------|
-| Redis down | Rate limit checks fail with 500 (fail-closed) |
-| PostgreSQL down | Client lookups fail with 500 |
-| Invalid API key | Returns 401 immediately |
-| Inactive client | Returns 401 with status info |
-| Server restart | Redis preserves rate limit state |
-| Concurrent requests | Lua scripts ensure atomic updates |
+| **Scenario**               | **Expected Behavior**                                                 |
+|----------------------------|-----------------------------------------------------------------------|
+| **Redis Unavailable**      | Rate limit checks fail with `500 Internal Server Error` (fail-closed) |
+| **PostgreSQL Unavailable** | Client lookups fail with `500 Internal Server Error`                  |
+| **Invalid API Key**        | Returns `401 Unauthorized` immediately                                |
+| **Inactive Client**        | Returns `401 Unauthorized` with client status information             |
+| **Server Restart**         | Redis preserves rate-limiting state (when persistence is enabled)     |
+| **Concurrent Requests**    | Lua scripts ensure atomic rate-limit updates and consistency          |
 
 ---
 

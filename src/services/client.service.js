@@ -38,7 +38,11 @@ async function getClient(id) {
 }
 
 async function listClients(filters = {}, page = 1, limit = 10) {
-  return clientRepository.findAll(filters, page, limit);
+  // Ensure page & limit are valid integers before they reach the repository.
+  const safePage = Math.max(1, Number.isFinite(Number(page)) ? Math.floor(Number(page)) : 1);
+  const safeLimit = Math.min(100, Math.max(1, Number.isFinite(Number(limit)) ? Math.floor(Number(limit)) : 10));
+
+  return clientRepository.findAll(filters, safePage, safeLimit);
 }
 
 async function updateClient(id, data) {
