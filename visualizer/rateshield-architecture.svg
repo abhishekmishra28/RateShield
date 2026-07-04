@@ -1,0 +1,173 @@
+<svg viewBox="0 0 1200 1120" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f2942" flood-opacity="0.18"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4a5568"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1e6fd9"/>
+    </marker>
+    <linearGradient id="navyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#16324f"/>
+      <stop offset="1" stop-color="#0f2942"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="1120" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="600" y="42" text-anchor="middle" font-size="26" font-weight="700" fill="#0f2942">RateShield — High-Level Architecture</text>
+  <text x="600" y="66" text-anchor="middle" font-size="13" fill="#4a5568">Standalone API rate-limiting service · Node.js / Express · Redis · PostgreSQL (Neon) · Prisma</text>
+
+  <!-- Client box -->
+  <rect x="470" y="92" width="260" height="58" rx="10" fill="#0f2942" filter="url(#shadow)"/>
+  <text x="600" y="115" text-anchor="middle" font-size="14.5" font-weight="700" fill="#ffffff">Client Application</text>
+  <text x="600" y="134" text-anchor="middle" font-size="11" fill="#cfe0f5">mobile app · web app · another service</text>
+
+  <line x1="600" y1="150" x2="600" y2="176" stroke="#4a5568" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="616" y="168" font-size="10.5" fill="#4a5568">x-api-key / x-admin-key</text>
+
+  <!-- Express server outer container -->
+  <rect x="60" y="182" width="1080" height="330" rx="14" fill="#eaf2fd" stroke="#bcd6f7" stroke-width="1.5"/>
+  <text x="86" y="208" font-size="14.5" font-weight="700" fill="#0f2942">Express.js Server</text>
+  <text x="86" y="224" font-size="10.5" fill="#4a5568">app.js — request enters here</text>
+
+  <!-- Middleware pipeline -->
+  <g>
+    <rect x="86" y="240" width="205" height="62" rx="8" fill="#ffffff" stroke="#1e6fd9" stroke-width="1.4" filter="url(#shadow)"/>
+    <text x="188" y="264" text-anchor="middle" font-size="12" font-weight="700" fill="#0f2942">Request Logger</text>
+    <text x="188" y="280" text-anchor="middle" font-size="10" fill="#4a5568">Pino structured logging</text>
+
+    <rect x="311" y="240" width="205" height="62" rx="8" fill="#ffffff" stroke="#1e6fd9" stroke-width="1.4" filter="url(#shadow)"/>
+    <text x="413" y="260" text-anchor="middle" font-size="12" font-weight="700" fill="#0f2942">API Key Auth</text>
+    <text x="413" y="275" text-anchor="middle" font-size="10" fill="#4a5568">validates x-api-key,</text>
+    <text x="413" y="288" text-anchor="middle" font-size="10" fill="#4a5568">loads client + checks active</text>
+
+    <rect x="536" y="240" width="205" height="62" rx="8" fill="#ffffff" stroke="#1e6fd9" stroke-width="1.4" filter="url(#shadow)"/>
+    <text x="638" y="260" text-anchor="middle" font-size="12" font-weight="700" fill="#0f2942">Admin Auth</text>
+    <text x="638" y="275" text-anchor="middle" font-size="10" fill="#4a5568">validates x-admin-key</text>
+    <text x="638" y="288" text-anchor="middle" font-size="10" fill="#4a5568">(admin routes only)</text>
+
+    <rect x="761" y="240" width="205" height="62" rx="8" fill="#ffffff" stroke="#1e6fd9" stroke-width="1.4" filter="url(#shadow)"/>
+    <text x="863" y="264" text-anchor="middle" font-size="12" font-weight="700" fill="#0f2942">Zod Validation</text>
+    <text x="863" y="280" text-anchor="middle" font-size="10" fill="#4a5568">rejects bad input → 400</text>
+
+    <line x1="291" y1="271" x2="311" y2="271" stroke="#1e6fd9" stroke-width="1.6" marker-end="url(#arrowBlue)"/>
+    <line x1="516" y1="271" x2="536" y2="271" stroke="#1e6fd9" stroke-width="1.6" marker-end="url(#arrowBlue)"/>
+    <line x1="741" y1="271" x2="761" y2="271" stroke="#1e6fd9" stroke-width="1.6" marker-end="url(#arrowBlue)"/>
+  </g>
+
+  <line x1="600" y1="302" x2="600" y2="326" stroke="#4a5568" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Controllers -->
+  <g>
+    <rect x="86" y="332" width="330" height="66" rx="8" fill="#ffffff" stroke="#0f2942" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="251" y="358" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f2942">Limiter Controller</text>
+    <text x="251" y="376" text-anchor="middle" font-size="10" fill="#4a5568">POST /api/v1/check</text>
+
+    <rect x="436" y="332" width="330" height="66" rx="8" fill="#ffffff" stroke="#0f2942" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="601" y="358" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f2942">Admin Controller</text>
+    <text x="601" y="376" text-anchor="middle" font-size="10" fill="#4a5568">CRUD /api/v1/admin/clients</text>
+
+    <rect x="786" y="332" width="330" height="66" rx="8" fill="#ffffff" stroke="#0f2942" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="951" y="358" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f2942">Analytics Controller</text>
+    <text x="951" y="376" text-anchor="middle" font-size="10" fill="#4a5568">/api/v1/admin/analytics</text>
+  </g>
+  <text x="600" y="422" text-anchor="middle" font-size="10.5" fill="#4a5568" font-style="italic">Controller Layer — parses HTTP, delegates to services (no business logic here)</text>
+
+  <line x1="251" y1="398" x2="251" y2="440" stroke="#4a5568" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="601" y1="398" x2="601" y2="440" stroke="#4a5568" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="951" y1="398" x2="951" y2="440" stroke="#4a5568" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- Service layer container -->
+  <rect x="86" y="446" width="1030" height="230" rx="10" fill="#fff7ec" stroke="#f0cf9a" stroke-width="1.4"/>
+  <text x="106" y="470" font-size="13" font-weight="700" fill="#7a4a12">Service Layer</text>
+
+  <rect x="106" y="482" width="220" height="56" rx="8" fill="#ffffff" stroke="#c98a2f" stroke-width="1.3" filter="url(#shadow)"/>
+  <text x="216" y="505" text-anchor="middle" font-size="11.5" font-weight="700" fill="#7a4a12">Client Service</text>
+  <text x="216" y="521" text-anchor="middle" font-size="9.5" fill="#4a5568">business rules, via repository</text>
+
+  <rect x="890" y="482" width="200" height="56" rx="8" fill="#ffffff" stroke="#c98a2f" stroke-width="1.3" filter="url(#shadow)"/>
+  <text x="990" y="505" text-anchor="middle" font-size="11.5" font-weight="700" fill="#7a4a12">Analytics Service</text>
+  <text x="990" y="521" text-anchor="middle" font-size="9.5" fill="#4a5568">Redis counters</text>
+
+  <rect x="380" y="482" width="440" height="56" rx="8" fill="#7a4a12" filter="url(#shadow)"/>
+  <text x="600" y="505" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">RateLimiter Factory</text>
+  <text x="600" y="522" text-anchor="middle" font-size="10" fill="#fbe6c8">Strategy Pattern — picks algorithm per client config</text>
+
+  <line x1="480" y1="538" x2="480" y2="560" stroke="#c98a2f" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="720" y1="538" x2="720" y2="560" stroke="#c98a2f" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <rect x="360" y="566" width="220" height="90" rx="8" fill="#ffffff" stroke="#c98a2f" stroke-width="1.3" filter="url(#shadow)"/>
+  <text x="470" y="592" text-anchor="middle" font-size="12" font-weight="700" fill="#7a4a12">Token Bucket</text>
+  <text x="470" y="608" text-anchor="middle" font-size="9.5" fill="#4a5568">burst + lazy refill,</text>
+  <text x="470" y="622" text-anchor="middle" font-size="9.5" fill="#4a5568">tokenBucket.lua</text>
+  <text x="470" y="640" text-anchor="middle" font-size="9.5" fill="#4a5568">O(1) atomic check</text>
+
+  <rect x="620" y="566" width="220" height="90" rx="8" fill="#ffffff" stroke="#c98a2f" stroke-width="1.3" filter="url(#shadow)"/>
+  <text x="730" y="592" text-anchor="middle" font-size="12" font-weight="700" fill="#7a4a12">Sliding Window</text>
+  <text x="730" y="608" text-anchor="middle" font-size="9.5" fill="#4a5568">timestamp log,</text>
+  <text x="730" y="622" text-anchor="middle" font-size="9.5" fill="#4a5568">slidingWindow.lua</text>
+  <text x="730" y="640" text-anchor="middle" font-size="9.5" fill="#4a5568">sorted-set eviction</text>
+
+  <!-- arrows down to data layer -->
+  <line x1="216" y1="538" x2="216" y2="600" stroke="#4a5568" stroke-width="1.6"/>
+  <line x1="216" y1="600" x2="960" y2="600" stroke="#4a5568" stroke-width="1.6"/>
+  <line x1="960" y1="600" x2="960" y2="700" stroke="#4a5568" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <line x1="470" y1="656" x2="470" y2="700" stroke="#4a5568" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="730" y1="656" x2="730" y2="700" stroke="#4a5568" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="990" y1="538" x2="990" y2="700" stroke="#4a5568" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- Data layer -->
+  <rect x="86" y="706" width="560" height="200" rx="12" fill="#fdecec" stroke="#e39a94" stroke-width="1.4"/>
+  <text x="366" y="734" text-anchor="middle" font-size="15" font-weight="700" fill="#a5281f">Redis</text>
+  <text x="366" y="752" text-anchor="middle" font-size="10" fill="#7a3a34">in-memory · hot path state</text>
+  <g font-size="10.5" fill="#5c2622">
+    <text x="120" y="778">• Bucket state (Hash) — rateshield:bucket:{clientId}</text>
+    <text x="120" y="798">• Sliding-window timestamps (Sorted Set) — rateshield:window:{clientId}</text>
+    <text x="120" y="818">• Analytics counters — rateshield:analytics:*</text>
+    <text x="120" y="838">• Lua scripts execute the entire read‑refill‑check‑write</text>
+    <text x="132" y="855">sequence as ONE atomic operation (race-condition safe)</text>
+    <text x="120" y="878">• TTL on every key → auto-expires inactive clients</text>
+  </g>
+
+  <rect x="676" y="706" width="440" height="200" rx="12" fill="#e9eef7" stroke="#a9bfe0" stroke-width="1.4"/>
+  <text x="896" y="734" text-anchor="middle" font-size="15" font-weight="700" fill="#2a4d8f">PostgreSQL (Neon)</text>
+  <text x="896" y="752" text-anchor="middle" font-size="10" fill="#3a4f70">durable · configuration store</text>
+  <g font-size="10.5" fill="#2c3e5c">
+    <text x="705" y="778">• Client table — algorithm, burstSize,</text>
+    <text x="717" y="795">refillRate/windowSize, apiKey, active flag</text>
+    <text x="705" y="815">• Accessed via Prisma ORM (type-safe)</text>
+    <text x="705" y="835">• Changes rarely → relational, disk-backed</text>
+    <text x="705" y="855">• Migrations versioned with</text>
+    <text x="717" y="872">npx prisma migrate dev</text>
+  </g>
+
+  <!-- Response path -->
+  <path d="M 1010 706 C 1090 600, 1090 250, 730 130" fill="none" stroke="#1e6fd9" stroke-width="1.8" stroke-dasharray="6,4" marker-end="url(#arrowBlue)"/>
+  <text x="985" y="500" font-size="10.5" fill="#1e6fd9" font-weight="600">response: allowed / remaining</text>
+  <text x="985" y="514" font-size="10.5" fill="#1e6fd9" font-weight="600">+ X-RateLimit-* headers</text>
+
+  <!-- Legend -->
+  <g font-size="10.5" fill="#4a5568">
+    <rect x="86" y="932" width="14" height="14" fill="#eaf2fd" stroke="#1e6fd9"/>
+    <text x="106" y="943">Middleware (auth, validation, logging)</text>
+
+    <rect x="360" y="932" width="14" height="14" fill="#ffffff" stroke="#0f2942"/>
+    <text x="380" y="943">Controller (HTTP-only concerns)</text>
+
+    <rect x="600" y="932" width="14" height="14" fill="#fff7ec" stroke="#c98a2f"/>
+    <text x="620" y="943">Service layer (business logic + strategy)</text>
+
+    <rect x="920" y="932" width="14" height="14" fill="#fdecec" stroke="#e39a94"/>
+    <text x="940" y="943">Data store — hot state (Redis) / durable config (Postgres)</text>
+  </g>
+
+  <line x1="60" y1="966" x2="1140" y2="966" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="600" y="990" text-anchor="middle" font-size="10.5" fill="#4a5568">Config vs. State: PostgreSQL holds what rarely changes and must survive restarts.</text>
+  <text x="600" y="1006" text-anchor="middle" font-size="10.5" fill="#4a5568">Redis holds what changes on every request and must be read/written in sub-millisecond time.</text>
+  <text x="600" y="1030" text-anchor="middle" font-size="9.5" fill="#94a3b8">RateShield · github.com/abhishekmishra28/RateShield</text>
+</svg>

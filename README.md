@@ -58,7 +58,20 @@ RateShield is a production-grade backend service that sits in front of APIs and 
 │  └──────────────────┘  │  │                                 │
 └────────────────────────┘  └─────────────────────────────────┘
 ```
+---
+<h2>📊 Visual Architecture</h2>
 
+<h3>System Architecture</h3>
+
+<p align="center">
+  <img src="./visualizer/rateshield-architecture.svg" alt="RateShield Architecture" width="1000">
+</p>
+
+<h3>Concurrency Flow</h3>
+
+<p align="center">
+  <img src="./visualizer/rateshield-concurrency-flow.svg" alt="RateShield Concurrency Flow" width="1000">
+</p>
 ---
 
 ## 🚀 Tech Stack
